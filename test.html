@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css" charset="utf-8">
+    <title>html5</title>
+
+</head>
+<body>
+    <svg></svg>
+    <script type="text/javascript" src="js/d3.v3.min.js"></script>
+    <script type="text/javascript">
+    //数据模型
+    let list=[
+        {course:"Math",enroll:320},
+        {course:"Chinese",enroll:401},
+        {course:"English",enroll:1093},
+        {course:"Music",enroll:781}
+    ];
+    //预设几种颜色以便区分不同的圆弧
+    let clrs = ["#f00","#0f0","#00f","#ff0","#0ff"];
+    let sum = 0;
+    list.forEach(function (d, i) {
+        d.accm = i == 0 ? 0 : list[i-1].accm + list[i-1].enroll;
+        sum += d.enroll;
+        d.clr = clrs[i];
+    });
+    var svg = d3.select("svg").attr({width:200,height:200});
+    var arc = d3.svg.arc().startAngle(function (d) {
+        return d.accm / sum * 2 * Math.PI;
+    }).endAngle(function (d) {
+        return (d.accm + d.enroll) / sum * 2 * Math.PI;
+    }).innerRadius(50).outerRadius(100);
+    svg.append('g')
+        .attr("transform","translate(100,100)")
+        .selectAll('path')
+        .data(list)
+        .enter()
+        .append('path')
+        .attr('d', function (d) {
+            return arc(d);
+        }).style("fill", function (d) {
+            console.log(d.clr);
+            return d.clr;
+        });
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css" charset="utf-8">
+    <title>html5</title>
+    <style>
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <svg id="part1"></svg>
+    <script type="text/javascript" src="js/d3.v3.min.js"></script>
+    <script type="text/javascript">
+        let list=[20, 40, 90, 50, 30, 40, 60, 90, 80,30,100];
+
+        let svgHeight = 400;
+        let svgWeight = 600;
+        //画布周边的空白
+        let padding = {left:30, right:30, top:30, bottom:30};
+        let svg = d3.select("body svg").style({width: svgWeight + "px", height: svgHeight + "px"});
+        //x轴的比例尺
+        var xScale = d3.scale.ordinal()
+            .domain(d3.range(list.length))
+            .rangeRoundBands([0, svgWeight - padding.left - padding.right]);
+
+        //y轴的比例尺
+        let yScale = d3.scale.linear()
+            .domain([0, 100])
+            .range([svgHeight - padding.top - padding.bottom, 0]);
+
+        let xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+        let yAxis = d3.svg.axis().scale(yScale).orient("left");
+        //矩形之间的空白
+        let rectPadding = 20;
+
+        // 图形
+        svg.selectAll("rect")
+            .data(list)
+            .enter()
+            .append("rect")
+            .attr("x", function (d, i) {return xScale(i) + rectPadding/2 + padding.left;})
+            .attr({y: svgHeight - padding.bottom, height: 0})
+            .transition()
+            .delay(function(d,i){return i * 100;})
+            .duration(1000)
+            .attr({fill: "orange"})
+            .attr("width", xScale.rangeBand() - rectPadding)
+            .attr("height", function (d) {return svgHeight - padding.top - padding.bottom - yScale(d);})
+            .attr("y", function (d) {return yScale(d) + padding.bottom;});
+
+        // 文字
+        /*svg.selectAll(".lineText")
+            .data(list)
+            .enter()
+            .append("text")
+            .attr("class","lineText")
+            .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+            .attr('x', function (d, i) {return xScale(i) + rectPadding/2;})
+            .attr("y",function(d){return yScale(d) + 20;})
+            .attr('dx', function (d, i) {return (xScale.rangeBand() - rectPadding)/2;})
+            .text(function(d){
+                return d;
+            });*/
+
+        //添加x轴
+        svg.append("g")
+            .attr("class","axis")
+            .attr("transform","translate(" + padding.left + "," + (svgHeight - padding.bottom) + ")")
+            .call(xAxis);
+
+        //添加y轴
+        svg.append("g")
+            .attr("class","axis")
+            .attr("transform","translate(" + padding.left + "," + padding.top + ")")
+            .call(yAxis);
+
+        let lineEnd = d3.svg.line()
+            .x(function (d, i) {return xScale(i) + padding.left + xScale.rangeBand()/2;})
+            .y(function (d) {return yScale(d) + padding.bottom;});
+
+        let lineStart = d3.svg.line()
+            .x(function (d, i) {return xScale(i) + padding.left + xScale.rangeBand()/2;})
+            .y(function (d) {return svgHeight - padding.bottom;});
+
+        svg.append("path")
+            .attr('d', lineStart(list))
+            .transition()
+            .duration(1000)
+            .attr('d', lineEnd(list))
+            .style({fill:"none",stroke:"red","stroke-width":2});
+
+    </script>
+</body>
+</html>

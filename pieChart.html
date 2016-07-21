@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/style.css" charset="utf-8">
+        <title>饼状图</title>
+        <style>
+            text{
+                stroke:white;
+                fill: none;
+                font-size: 11px;
+            }
+        </style>
+    </head>
+    <body>
+        <svg></svg>
+        <script type="text/javascript" src="js/d3.v3.min.js"></script>
+        <script type="text/javascript">
+            let width = 400;
+            let height = 400;
+            let data = [
+                {name:"1990", data: 20},
+                {name:"1991", data: 60},
+                {name:"1992", data: 30},
+                {name:"1993", data: 80},
+                {name:"1994", data: 100},
+                {name:"1995", data: 10},
+                {name:"1996", data: 50},
+                {name:"1997", data: 30},
+            ];
+
+            let g = d3.select("svg")
+                .attr({width:width + "px", height: height + "px"})
+                .append("g")
+                .attr("transform", "translate(" + width/2 + "," + height/2 + ")");
+
+            // 圆弧生成器
+            let arc_generator = d3.svg.arc()
+                .innerRadius(100)
+                .outerRadius(200);
+
+            // 弧度生成器
+            let angle_data = d3.layout.pie().value(function (d) {return d.data;});
+
+            // 颜色生成器
+            let color_generator = d3.scale.category10();
+
+            // 绘制饼状图
+            g.selectAll("path")
+                .data(angle_data(data))         // 为每个数据生成对应的弧度
+                .enter()
+                .append("path")
+                .attr("d", function(d) {
+                    return arc_generator(d);    // 生成圆弧轨迹
+                })
+                .style("fill", function (d, i) {
+                    return color_generator(i);  // 生成颜色
+                });
+
+            // 填充文字
+            g.selectAll("text")
+                .data(angle_data(data))
+                .enter()
+                .append("text")
+                .text(function (d) {return d.data.name;})
+                .attr("transform", function (d) {return "translate(" + arc_generator.centroid(d) + ")";}) // 获取扇形的中心位置
+                .attr("text-anchor", "middle");
+        </script>
+    </body>
+</html>
