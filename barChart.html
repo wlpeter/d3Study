@@ -56,19 +56,24 @@
                 .domain([0, 100])
                 .range([height - margin.top - margin.bottom, 0]);
 
+            // X轴坐标生成器
             let xAxis = d3.svg.axis().scale(x_scale).orient("bottom");
+            // y轴坐标生成器
             let yAxis = d3.svg.axis().scale(y_scale).orient("left");
 
+            // 绘制X轴坐标
             d3.select("svg")
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + (height-margin.bottom) + ")")
                 .call(xAxis);
+
+            // 绘制Y轴坐标
             d3.select("svg")
                 .append("g")
                 .attr("transform","translate(" + margin.left + "," + margin.top + ")")
                 .call(yAxis);
 
-            // 生成条形图
+            // 生成柱状图
             g.selectAll("rect")
                 .data(data)
                 .enter()

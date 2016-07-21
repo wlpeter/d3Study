@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <link rel="stylesheet" href="css/style.css" charset="utf-8">
-        <title>折线图</title>
+        <title>面积图</title>
         <style>
             .domain,
             .tick line,
@@ -68,24 +68,27 @@
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 .call(yAxis);
 
-            //初始曲线
-            let lineStart = d3.svg.line()
+            //初始面积生成器
+            let areaStart = d3.svg.area()
                 .x(function (d, i) {return x_scale(i);})
-                .y(function (d) {return height-margin.bottom-margin.top;})
+                .y1(function (d) {return height-margin.bottom-margin.top;})
+                .y0(height-margin.bottom-margin.top)
                 .interpolate("monotone"); // 曲线
 
-            //最终曲线
-            let lineEnd = d3.svg.line()
+            //最终面积生成器
+            let areaEnd = d3.svg.area()
                 .x(function (d, i) {return x_scale(i);})
-                .y(function (d) {return y_scale(d.data);})
+                .y1(function (d) {return y_scale(d.data);})
+                .y0(height-margin.bottom-margin.top)
                 .interpolate("monotone"); // 曲线
 
-            // 生成曲线
+            // 生成面积图
             g.append("path")
-                .attr("d", lineStart(data)) // 生成初始曲线
+                .attr("d", areaStart(data)) // 生成初始面积图
                 .transition()
                 .duration(1000)
-                .attr("d", lineEnd(data));  // 生成最终曲线
+                .attr("d", areaEnd(data))  // 生成最终面积图
+                .style("fill", "orange");
 
             // 生成圆点
             let circle = g.selectAll("circle")

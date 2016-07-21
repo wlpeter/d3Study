@@ -3,5 +3,9 @@
 （本次使用的d3版本是v3.5.16）
 
 barChart.html => 柱状图
+
 pieChart.html => 饼状图
+
 strokeChart.html => 线性图
+
+areaChart.html => 面积图
